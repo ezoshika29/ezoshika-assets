@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>えぞしか空想雑貨店 | エゾシカさんの日常</title>
+  <style>
+    :root {
+      --bg: #f7f3ee;
+      --surface: #ffffff;
+      --primary: #5c7a4e;
+      --primary-dark: #3e5735;
+      --accent: #c8956a;
+      --text: #2d2a26;
+      --text-muted: #7a7168;
+      --border: #e0d9d0;
+      --badge-gadget: #deebd4;
+      --badge-gadget-text: #3e5735;
+      --badge-apparel: #fce8d4;
+      --badge-apparel-text: #7a4a1e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      line-height: 1.7;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      padding: 48px 24px 36px;
+    }
+    header .logo-mark {
+      font-size: 2.4rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+    header .tagline {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      opacity: 0.8;
+      letter-spacing: 0.12em;
+    }
+    header nav {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+    }
+    header nav a { color: rgba(255,255,255,0.85); text-decoration: none; }
+    header nav a:hover { color: #fff; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #fff;
+      text-align: center;
+      padding: 56px 24px;
+    }
+    .hero h1 {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .hero p {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    /* ── Layout ── */
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── Notice banner ── */
+    .notice {
+      background: #fff8ec;
+      border: 1px solid #f0d9a0;
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-size: 0.8rem;
+      color: #7a5c1e;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    /* ── Search ── */
+    .search-wrap { margin-bottom: 20px; }
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    /* ── Tabs ── */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 28px;
+      border-bottom: 2px solid var(--border);
+    }
+    .tab {
+      position: relative;
+      bottom: -2px;
+      padding: 8px 18px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      transition: color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .tab:hover { color: var(--primary); background: #f0ede8; }
+    .tab.active {
+      color: var(--primary-dark);
+      background: var(--surface);
+      border-color: var(--border);
+      border-bottom-color: var(--surface);
+    }
+    .tab .count {
+      display: inline-block;
+      margin-left: 5px;
+      font-size: 0.7rem;
+      background: var(--border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      padding: 0 6px;
+      font-weight: 400;
+    }
+    .tab.active .count { background: var(--primary); color: #fff; }
+
+    /* ── Product Grid ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 28px;
+    }
+
+    .product-card {
+      background: var(--surface);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .product-card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+      transform: translateY(-3px);
+    }
+    .product-card.hidden { display: none; }
+
+    /* ── Image Carousel ── */
+    .product-image-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #f0ece6;
+      overflow: hidden;       /* clips the slides + enables zoom */
+    }
+
+    .slides {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;  /* Firefox */
+      transition: transform 0.35s;
+    }
+    .slides::-webkit-scrollbar { display: none; }
+
+    /* hover zoom: scale the whole strip, not individual images */
+    .product-card:hover .slides { transform: scale(1.04); }
+
+    .slides img {
+      flex-shrink: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      scroll-snap-align: start;
+      pointer-events: none;   /* let drag pass through to scroll container */
+      user-select: none;
+    }
+
+    /* dot indicators — only shown when >1 image */
+    .thumb-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      pointer-events: none;   /* dots themselves don't block drag */
+    }
+    .thumb-dots span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.55);
+      cursor: pointer;
+      pointer-events: all;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .thumb-dots span.active {
+      background: #fff;
+      transform: scale(1.25);
+    }
+
+    /* drag cursor on multi-image cards */
+    .product-image-wrap.multi { cursor: grab; }
+    .product-image-wrap.multi:active { cursor: grabbing; }
+
+    /* ── Carousel arrows ── */
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.88);
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s, background 0.15s, transform 0.15s;
+      pointer-events: none;
+    }
+    .carousel-arrow svg { width: 14px; height: 14px; stroke: var(--primary-dark); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .carousel-arrow.prev { left: 8px; }
+    .carousel-arrow.next { right: 8px; }
+    .carousel-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.1); }
+    .carousel-arrow.hidden-arrow { opacity: 0 !important; pointer-events: none !important; }
+
+    /* show arrows when hovering the image area */
+    .product-image-wrap.multi:hover .carousel-arrow:not(.hidden-arrow) {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ── Product Body ── */
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .badge-gadget  { background: var(--badge-gadget);  color: var(--badge-gadget-text); }
+    .badge-apparel { background: var(--badge-apparel); color: var(--badge-apparel-text); }
+
+    .product-body { padding: 18px 20px 22px; }
+    .product-body .meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .product-body h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .product-body p  { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+    .product-footer {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .price { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
+    .price small { font-size: 0.75rem; font-weight: 400; color: var(--text-muted); margin-left: 4px; }
+
+    .btn-cart {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-cart:hover { background: var(--primary-dark); }
+
+    /* ── Empty state ── */
+    .empty-message {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--primary-dark);
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 40px 24px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      line-height: 2;
+    }
+    footer strong { color: #fff; font-size: 0.9rem; }
+
+    @media (max-width: 600px) {
+      .product-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+      header .logo-mark { font-size: 1.8rem; }
+      .tab { padding: 7px 12px 9px; font-size: 0.78rem; }
+    }
+    @media (max-width: 400px) {
+      .product-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">🦌 えぞしか空想雑貨店</div>
+  <div class="tagline">— エゾシカさんの日常から生まれたアイテムたち —</div>
+  <nav>
+    <a href="#">ガジェット</a>
+    <a href="#">アパレル</a>
+    <a href="#">ギフト</a>
+    <a href="#">ブランドについて</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <p>仕事モードも、ぽや〜っとした休日も。エゾシカさんの毎日をそっと支えるアイテムを集めました。</p>
+</div>
+
+<main>
+  <div class="notice">
+    ⚠ このページは仮想展示用のサンプルです。価格・在庫・購入機能はダミーです。
+  </div>
+
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="text" placeholder="🔍　商品を検索…" oninput="applyFilter()">
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active" data-filter="all">ALL <span class="count">6</span></div>
+    <div class="tab" data-filter="ガジェット">ガジェット <span class="count">5</span></div>
+    <div class="tab" data-filter="アパレル">アパレル <span class="count">1</span></div>
+  </div>
+
+  <div class="product-grid">
+
+    <!-- 1: ヘッドセット（Over-Ear） — 2枚 -->
+    <div class="product-card" data-category="ガジェット" data-name="ヘッドセット Over-Ear">
+      <div class="product-image-wrap multi">
+        <div class="slides">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/headset_over_ear_01.png" alt="ヘッドセット 1">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/headset_over_ear_02.png" alt="ヘッドセット 2">
+        </div>
+        <button class="carousel-arrow prev hidden-arrow" aria-label="前の画像">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-arrow next" aria-label="次の画像">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        <div class="thumb-dots">
+          <span class="active"></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="meta"><span class="badge badge-gadget">ガジェット</span></div>
+        <h3>ヘッドセット（Over-Ear）</h3>
+        <p>マイク一体型のOver-Earヘッドセット。集中したい仕事タイムも、気分転換の音楽も、これひとつで。</p>
+        <div class="product-footer">
+          <div class="price">¥ー<small>（仮）</small></div>
+          <button class="btn-cart">カートに入れる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2: ヘッドフォン（Over-Ear・折りたたみ） — 1枚 -->
+    <div class="product-card" data-category="ガジェット" data-name="ヘッドフォン Over-Ear 折りたたみ">
+      <div class="product-image-wrap">
+        <div class="slides">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/headphone_foldable_01.png" alt="ヘッドフォン">
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="meta"><span class="badge badge-gadget">ガジェット</span></div>
+        <h3>ヘッドフォン（Over-Ear・折りたたみ）</h3>
+        <p>コンパクトに折りたためるOver-Earヘッドフォン。カフェでも外出先でも、バッグにすっと入る薄さ。</p>
+        <div class="product-footer">
+          <div class="price">¥ー<small>（仮）</small></div>
+          <button class="btn-cart">カートに入れる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3: 有線イヤホン — 1枚 -->
+    <div class="product-card" data-category="ガジェット" data-name="有線イヤホン">
+      <div class="product-image-wrap">
+        <div class="slides">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/earphone_wired_01.png" alt="有線イヤホン">
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="meta"><span class="badge badge-gadget">ガジェット</span></div>
+        <h3>有線イヤホン</h3>
+        <p>充電不要で、さっとつなぐだけ。シンプルを極めた有線イヤホン。音に集中したい時のエゾシカさんの相棒。</p>
+        <div class="product-footer">
+          <div class="price">¥ー<small>（仮）</small></div>
+          <button class="btn-cart">カートに入れる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4: メカニカルキーキャップセット — 2枚 -->
+    <div class="product-card" data-category="ガジェット" data-name="メカニカルキーキャップセット キーボード">
+      <div class="product-image-wrap multi">
+        <div class="slides">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/keycap_mechanical_01.png" alt="キーキャップ 1">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/keycap_mechanical_03.png" alt="キーキャップ 2">
+        </div>
+        <button class="carousel-arrow prev hidden-arrow" aria-label="前の画像">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-arrow next" aria-label="次の画像">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        <div class="thumb-dots">
+          <span class="active"></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="meta"><span class="badge badge-gadget">ガジェット</span></div>
+        <h3>メカニカルキーキャップセット</h3>
+        <p>キーボードをもっと自分らしく。エゾシカさん監修のオリジナルデザインキーキャップ。打鍵感も見た目も妥協なし。</p>
+        <div class="product-footer">
+          <div class="price">¥ー<small>（仮）</small></div>
+          <button class="btn-cart">カートに入れる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5: メガネチェーン — 1枚 -->
+    <div class="product-card" data-category="アパレル" data-name="メガネチェーン グラスコード">
+      <div class="product-image-wrap">
+        <div class="slides">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/glasses_chain_01.png" alt="メガネチェーン">
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="meta"><span class="badge badge-apparel">アパレル</span></div>
+        <h3>メガネチェーン</h3>
+        <p>仕事のできるエゾシカさんの必需品。落ち着いた色合いと上品なデザインで、どんなスタイルにも馴染む一本。</p>
+        <div class="product-footer">
+          <div class="price">¥ー<small>（仮）</small></div>
+          <button class="btn-cart">カートに入れる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6: Apple Watchバンド — 1枚 -->
+    <div class="product-card" data-category="ガジェット" data-name="Apple Watch バンド ウォッチ">
+      <div class="product-image-wrap">
+        <div class="slides">
+          <img src="https://raw.githubusercontent.com/ezoshika29/ezoshika-assets/main/characters/products/apple_watch_band_01.png" alt="Apple Watchバンド">
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="meta"><span class="badge badge-gadget">ガジェット</span></div>
+        <h3>Apple Watchバンド</h3>
+        <p>手首からも、エゾシカさんらしさを。Apple Watch対応のオリジナルバンド。素材・カラー、全部にこだわりました。</p>
+        <div class="product-footer">
+          <div class="price">¥ー<small>（仮）</small></div>
+          <button class="btn-cart">カートに入れる</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /product-grid -->
+
+  <div class="empty-message" id="emptyMessage">
+    🦌 該当する商品が見つかりませんでした
+  </div>
+</main>
+
+<footer>
+  <strong>えぞしか空想雑貨店</strong><br>
+  エゾシカさんの日常 — AIプロンプターが本当に使っているもの、全部ここにあります。<br>
+  &copy; 2026 えぞしかのほんしゃ
+</footer>
+
+<script>
+  /* ── Carousel setup ── */
+  document.querySelectorAll('.product-image-wrap.multi').forEach(wrap => {
+    const slides  = wrap.querySelector('.slides');
+    const dots    = wrap.querySelectorAll('.thumb-dots span');
+    const btnPrev = wrap.querySelector('.carousel-arrow.prev');
+    const btnNext = wrap.querySelector('.carousel-arrow.next');
+    const imgCount = slides.querySelectorAll('img').length;
+
+    function currentIndex() {
+      return Math.round(slides.scrollLeft / slides.clientWidth);
+    }
+
+    function goTo(i) {
+      slides.scrollTo({ left: slides.clientWidth * i, behavior: 'smooth' });
+    }
+
+    function syncUI(idx) {
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      btnPrev.classList.toggle('hidden-arrow', idx === 0);
+      btnNext.classList.toggle('hidden-arrow', idx === imgCount - 1);
+    }
+
+    // arrow click
+    btnPrev.addEventListener('click', e => { e.stopPropagation(); goTo(currentIndex() - 1); });
+    btnNext.addEventListener('click', e => { e.stopPropagation(); goTo(currentIndex() + 1); });
+
+    // dot click
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', e => { e.stopPropagation(); goTo(i); });
+    });
+
+    // scroll → sync
+    let scrollTimer;
+    slides.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => syncUI(currentIndex()), 50);
+    });
+
+    // mouse drag
+    let startX, startLeft, dragging = false;
+    slides.addEventListener('mousedown', e => {
+      dragging  = true;
+      startX    = e.pageX;
+      startLeft = slides.scrollLeft;
+      slides.style.scrollBehavior = 'auto';
+    });
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      slides.scrollLeft = startLeft - (e.pageX - startX);
+    });
+    document.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      slides.style.scrollBehavior = 'smooth';
+      goTo(currentIndex());
+    });
+
+    syncUI(0); // initial state
+  });
+
+  /* ── Tab & Search filter ── */
+  let activeFilter = 'all';
+
+  function applyFilter() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const cards = document.querySelectorAll('.product-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const matchTab    = activeFilter === 'all' || card.dataset.category === activeFilter;
+      const matchSearch = query === '' || card.dataset.name.toLowerCase().includes(query);
+      card.classList.toggle('hidden', !(matchTab && matchSearch));
+      if (matchTab && matchSearch) visible++;
+    });
+    document.getElementById('emptyMessage').style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeFilter = tab.dataset.filter;
+      applyFilter();
+    });
+  });
+</script>
+
+</body>
+</html>
